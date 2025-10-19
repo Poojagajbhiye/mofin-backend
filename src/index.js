@@ -6,20 +6,14 @@ import http from 'http';
 import cors from 'cors';
 import { ApolloServer } from 'apollo-server-express';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { userTypeDefs } from './modules/users/user.typeDefs.js';
+import { userResolvers } from './modules/users/user.resolver.js';
+import { authMiddleware } from './common/auth/auth.middleware.js';
+import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge';
 
-// For now we'll create a tiny placeholder schema and resolvers.
-// We'll replace these with modular imports from modules/* when ready.
-const typeDefs = `
-  type Query {
-    health: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    health: () => 'Mofin backend up ✔',
-  },
-};
+// Merge typeDefs/resolvers (future-proof)
+const typeDefs = mergeTypeDefs([userTypeDefs]);
+const resolvers = mergeResolvers([userResolvers]);
 
 async function start() {
   const app = express();
@@ -30,9 +24,11 @@ async function start() {
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const server = new ApolloServer({
-    schema,
-    // context will later include user from auth middleware
-    context: ({ req }) => ({ req }),
+  schema: makeExecutableSchema({ typeDefs, resolvers }),
+    context: async ({ req }) => {
+      const { user } = await authMiddleware({ req });
+      return { user };
+    },
   });
 
   await server.start();
