@@ -10,11 +10,17 @@ export const userResolvers = {
     },
   },
   Mutation: {
-    register: async (_, { name, email, password }) => {
+    register: async (_, { name, email, password, parentId }, { user }) => {
+      // Only admin/main user can create sub-accounts
+      if (parentId) {
+        if (!user) throw new Error('Not authenticated');
+        if (user.role !== 'admin') throw new Error('Only main account can create sub-accounts');
+      }
+
       const existing = await User.findOne({ email });
       if (existing) throw new Error('User already exists');
 
-      const newUser = new User({ name, email, password, role: 'member' });
+      const newUser = new User({ name, email, password, role: parentId ? 'member' : 'admin', parentId: parentId || null });
       await newUser.save();
 
       const token = signToken({ id: newUser._id });
