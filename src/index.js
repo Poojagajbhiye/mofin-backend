@@ -12,10 +12,12 @@ import { authMiddleware } from './common/auth/auth.middleware.js';
 import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge';
 import { expenseTypeDefs } from './modules/expenses/expense.typeDefs.js';
 import { expenseResolvers } from './modules/expenses/expense.resolver.js';
+import { requestTypeDefs } from './modules/requests/request.typeDefs.js';
+import { requestResolvers } from './modules/requests/request.resolver.js';
 
 // Merge typeDefs/resolvers (future-proof)
-const typeDefs = mergeTypeDefs([userTypeDefs, expenseTypeDefs]);
-const resolvers = mergeResolvers([userResolvers, expenseResolvers]);
+const typeDefs = mergeTypeDefs([userTypeDefs, expenseTypeDefs, requestTypeDefs]);
+const resolvers = mergeResolvers([userResolvers, expenseResolvers, requestResolvers]);
 
 async function start() {
   const app = express();
