@@ -1,4 +1,5 @@
 // src/index.js
+import { connectDB } from './config/db.js';
 import 'dotenv/config';
 import express from 'express';
 import http from 'http';
@@ -41,6 +42,8 @@ async function start() {
   app.get('/health', (req, res) => res.send({ status: 'ok', time: new Date().toISOString() }));
 
   const PORT = process.env.PORT || 4000;
+  // Connect DB
+  await connectDB(process.env.MONGO_URI);
   httpServer.listen(PORT, () => {
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
     console.log(`💓 Health at http://localhost:${PORT}/health`);
