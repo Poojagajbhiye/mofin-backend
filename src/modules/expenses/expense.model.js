@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 
-const expenseSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+const { Schema } = mongoose;
+
+const expenseSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   year: { type: Number, required: true },
   months: {
     type: Map,
-    of: new mongoose.Schema({
+    of: new Schema({
       income: { type: Number, default: 0 },
       balance: { type: Number, default: 0 },
       savings: [
@@ -14,10 +16,7 @@ const expenseSchema = new mongoose.Schema({
       investments: [
         { type: { type: String }, amount: { type: Number, default: 0 } }
       ],
-      expenses: { type: Map, of: new mongoose.Schema({
-        budget: { type: Number, default: 0 },
-        actual: { type: Number, default: 0 }
-      }) }
+      expenses: { type: Schema.Types.Mixed } // <- plain object now
     }, { _id: false })
   }
 }, { timestamps: true });
