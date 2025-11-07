@@ -39,8 +39,8 @@ export const requestResolvers = {
       if (request.status !== 'pending') throw new Error('Request already processed');
 
       // Apply changes to Expenses
-      let expense = await Expense.findOne({ userId: request.userId, year: request.year });
-      if (!expense) expense = new Expense({ userId: request.userId, year: request.year, months: {} });
+      let expense = await Expense.findOne({ userId: request.parentId, year: request.year });
+      if (!expense) expense = new Expense({ userId: request.parentId, year: request.year, months: {} });
 
       const monthData = expense.months.get(request.month) || { income: 0, balance: 0, savings: [], investments: [], expenses: {} };
 
