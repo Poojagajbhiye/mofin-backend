@@ -26,7 +26,6 @@ async function start() {
 
   const httpServer = http.createServer(app);
 
-  const schema = makeExecutableSchema({ typeDefs, resolvers });
   const server = new ApolloServer({
   schema: makeExecutableSchema({ typeDefs, resolvers }),
     context: async ({ req }) => {
